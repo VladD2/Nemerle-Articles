@@ -1,0 +1,41 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Compiler;
+using Nemerle.Compiler.Parsetree;
+using Nemerle.Compiler.Typedtree;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MacroIntroLibrary
+{
+  [MacroUsage(MacroPhase.BeforeTypedMembers, MacroTargets.Class)]
+  macro Disposable(typeBuilder : TypeBuilder)
+  {
+    DisposableImpl.DoTransform(Macros.ImplicitCTX(), typeBuilder)
+  }
+  
+  module DisposableImpl
+  {
+    public DoTransform(typer : Typer, typeBuilder : TypeBuilder) : void
+    {
+      Macros.DefineCTX(typer); // это нружно для цитаты <[ ttype: System.IDisposable ]>
+      
+      def iDisposableType = <[ ttype: System.IDisposable ]>;
+      def needOverride = typeBuilder.BaseClass.TryRequire(iDisposableType);
+      Message.Hint($"needOverride=$needOverride");
+      
+      // Добавляем метод Dispose. Метод помечаем макроатрибутом ImplementDispose.
+      // Он "вызовится" позже.
+      typeBuilder.Define(
+      if (needOverride)
+        <[ decl: [ImplementDispose] public override Dispose() : void { base.Dispose(); } ]>
+      else
+        <[ decl: [ImplementDispose] public  Dispose() : void { } ]>
+      );
+    }
+  }
+}

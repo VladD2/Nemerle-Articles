@@ -1,0 +1,64 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Compiler;
+using Nemerle.Compiler.Parsetree;
+using Nemerle.Compiler.Typedtree;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MacroIntroLibrary
+{
+  [MacroUsage(MacroPhase.BeforeInheritance, MacroTargets.Assembly)]
+  macro ProjectInfo()
+  {
+    ProjectInfoImpl.DoTransform(Macros.ImplicitCTX(), )
+  }
+  
+  module ProjectInfoImpl
+  {
+    public DoTransform(typer : Typer, ) : void
+    {
+      Macros.DefineCTX(typer);
+
+      def types = typer.Manager.NameTree.NamespaceTree.GetTypeBuilders( // 1
+                    onlyTopDeclarations=true);
+
+      foreach (type in types)
+      {
+        def partsCount = type.AstParts.Length;
+
+        Message.Hint(type.AstParts.Head.Location, // 2
+          $"Type: '$(type.FullName)' Parts count: $partsCount");
+
+        foreach (ast in type.AstParts with i) // 3
+        {
+          Message.Hint(ast.Location, // 4
+            $"  Part $(i + 1) of type '$type'  $(ast.GetMembers().Length)");
+
+          foreach (memberAst in ast.GetMembers()) // 5
+          {
+            Message.Hint(memberAst.NameLocation, $"    $memberAst"); // 6
+
+            match (memberAst) // 7
+            {
+              | <[ decl: ..$_attrs $_name(..$parameters) : $retType $_body ]> => // 8
+                foreach (param in parameters with i)
+                {
+                  def paramType = typer.BindType(param.Type);
+                  Message.Hint(param.Location, $"      Paramert $(i + 1): $(param.Name) : $paramType"); // 9
+                }
+
+                Message.Hint(retType.Location, $"      Return type $retType"); // 10
+        
+              | _ => ()
+            }
+          }
+        }
+      }
+    }
+  }
+}

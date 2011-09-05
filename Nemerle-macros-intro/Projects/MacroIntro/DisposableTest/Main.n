@@ -1,0 +1,34 @@
+﻿using System;
+using System.Console;
+using System.IO;
+
+using MacroIntroLibrary;
+
+
+class TestBase : IDisposable
+{
+  private MyDispose() : void  implements IDisposable.Dispose {  }
+}
+
+class Test2 : TestBase, IDisposable
+{
+}
+
+
+[Record]
+[Disposable]
+class Test : TestBase
+{
+  private FileStream : FileStream;
+  private Str : string;
+  private Reader : TextReader { get; private set; }
+}
+
+module Program2
+{
+  Main() : void
+  {
+    def x = Test(null, "", null);
+    x.Dispose();
+  }
+}

@@ -1,0 +1,31 @@
+﻿using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Console;
+using System.Linq;
+
+using MacroIntroLibrary; // 1
+
+[assembly: ProjectTypeInfo] // 2
+
+public partial class TestClass { }
+
+module Program
+{
+  Main() : void
+  {
+    WriteLine("Hi!");
+    _ = ReadLine();
+  }
+}
+
+public partial class TestClass
+{
+  public Method(param1 : int, param2 : System.Int32, param3 = 42) : int
+  {
+    param1 + param2 + param3
+  }
+}

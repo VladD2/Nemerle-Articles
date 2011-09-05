@@ -1,0 +1,60 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Compiler;
+using Nemerle.Compiler.Parsetree;
+using Nemerle.Compiler.Typedtree;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MacroIntroLibrary
+{
+  [MacroUsage(MacroPhase.WithTypedMembers, MacroTargets.Assembly)]
+  macro ProjectTypeInfo()
+  {
+    ProjectTypeInfoImpl.DoTransform(Macros.ImplicitCTX(), )
+  }
+  
+  module ProjectTypeInfoImpl
+  {
+    public DoTransform(typer : Typer, ) : void
+    {
+      Macros.DefineCTX(typer);
+      
+      def types = typer.Manager.NameTree.NamespaceTree.GetTypeBuilders( // 1
+              onlyTopDeclarations=true);
+
+      foreach (type in types)
+      {
+        
+        Message.Hint(type.Location, // 1
+          $"Type: '$(type.FullName)' : $(type.BaseClass)");
+
+        def bindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Instance
+          | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        
+        def members = type.GetMembers(bindingFlags); // 2
+        
+        foreach (member in members)
+        {
+          Message.Hint(member.NameLocation, $"    $member"); // 3
+
+          match (member)
+          {
+            | method is MethodBuilder =>
+              def header = method.Header;
+              foreach (param in header.parms with i) // 4
+                Message.Hint(param.Location, $"      Paramert $(i + 1): $(param.Name) : $(param.ty)"); // 5
+              
+              Message.Hint(header.RetTypeLoc, $"      Return type $(method.Header.RetType)"); // 6
+
+            | _                       => ()
+          }
+        }
+      }
+    }
+  }
+}
