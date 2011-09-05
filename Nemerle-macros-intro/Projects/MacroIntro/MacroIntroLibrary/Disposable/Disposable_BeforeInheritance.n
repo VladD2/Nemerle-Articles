@@ -13,8 +13,9 @@ using System.Linq;
 namespace MacroIntroLibrary
 {
   [MacroUsage(MacroPhase.BeforeInheritance, MacroTargets.Class)]
-  macro Disposable(typeBuilder : TypeBuilder)
+  macro Disposable(typeBuilder : TypeBuilder, disposeManaged = null, disposeUnmanaged = null, disposeName = null)
   {
+    _ = disposeManaged; _ = disposeUnmanaged; _ = disposeName;
     // Добавляем "наследование" IDisposable.
     typeBuilder.AddImplementedInterface(<[ System.IDisposable ]>);
   }

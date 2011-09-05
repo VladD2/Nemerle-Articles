@@ -62,7 +62,7 @@
     <Compile Include="Disposable\Disposable_BeforeInheritance.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Disposable\ImplementDispose.n">
+    <Compile Include="Disposable\ImplementDisposeFields.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Macro1.n" />

@@ -26,11 +26,11 @@ class Base : IDisposable
     {
       when (disposing)
       {
-        // Free other state (managed objects).
-        WriteLine("Free other state (managed objects).");
+        // Генерируем вызовы Dispose для IDisposable-полей.
+        // Вставояем код очистки управляемых ресурсов предосталяемый пользователем.
       }
-      // Free your own state (unmanaged objects).
-      // Set large fields to null.
+      // Вставляем код очистки неуправляемых ресурсов предосталяемый пользователем.
+      // Обнуляем все изменяемые поля.
       _disposed = true;
     }
   }

@@ -5,30 +5,27 @@ using System.IO;
 using MacroIntroLibrary;
 
 
-class TestBase : IDisposable
-{
-  private MyDispose() : void  implements IDisposable.Dispose {  }
-}
-
-class Test2 : TestBase, IDisposable
+[Disposable(WriteLine("Dispose managed resources."), WriteLine("Dispose unmanaged resources."), Close)]
+class Base
 {
 }
-
 
 [Record]
 [Disposable]
-class Test : TestBase
+class Derived : Base
 {
   private FileStream : FileStream;
   private Str : string;
-  private Reader : TextReader { get; private set; }
+  public Reader : TextReader { get; private set; }
 }
 
 module Program2
 {
   Main() : void
   {
-    def x = Test(null, "", null);
-    x.Dispose();
+    
+    def x = Derived(null, "", null);
+    x.Close();
+    _ = ReadLine();
   }
 }

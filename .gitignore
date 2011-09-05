@@ -32,3 +32,5 @@ Nemerle-macros-intro/Nemerle-macros-intro.rsdnml-Pics/*
 *.html
 *.rsdnml.xml
 *~$*
+Nemerle-macros-intro/Projects/MacroIntro/MacroIntroLibrary/_N_GeneratedSource_DisposableTest.n
+_N_*.n
