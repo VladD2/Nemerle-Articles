@@ -1,18 +1,10 @@
-﻿using Nemerle.Collections;
-using Nemerle.Text;
-using Nemerle.Utility;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Console;
-using System.Linq;
 
-//[Disposable(DisposeName=Dispose)]
 class Base : IDisposable
 {
   private mutable _disposed : bool;
 
-  //Implement IDisposable.
   public Dispose() : void
     implements IDisposable.Dispose
   {
@@ -26,18 +18,19 @@ class Base : IDisposable
     {
       when (disposing)
       {
-        // Генерируем вызовы Dispose для IDisposable-полей.
-        // Вставояем код очистки управляемых ресурсов предосталяемый пользователем.
+        // Освобождаем управляемые ресурсы.
+        // Отписываемся от событий и удаляем текущий объект из разных списков.
       }
-      // Вставляем код очистки неуправляемых ресурсов предосталяемый пользователем.
-      // Обнуляем все изменяемые поля.
+      // Очистка неуправляемых ресурсов.
+      // Обнуление полей ссылающихся на объемные объекты 
+      // (или всех изменяемых ссылочных полей).
       _disposed = true;
     }
   }
 
+  // Если объект владает неуправляемыми ресурсами реализовать:
   protected override Finalize() : void
   {
-    // Simply call Dispose(false).
     Dispose(false);
   }
 }
@@ -52,18 +45,22 @@ class Derived : Base, IDisposable
     {
       when (disposing)
       {
-        // Release managed resources.
+         // Освобождаем управляемые ресурсы.
+        // Отписываемся от событий и удаляем текущий объект из разных списков.
       }
-      // Release unmanaged resources.
-      // Set large fields to null.
-      // Call Dispose on your base class.
+      // Очистка неуправляемых ресурсов.
+      // Обнуление полей ссылающихся на объемные объекты 
+      // (или всех изменяемых ссылочных полей).
       _disposed = true;
     }
     base.Dispose(disposing);
   }
-  // The derived class does not have a Finalize method
-  // or a Dispose method without parameters because it inherits
-  // them from the base class.
+
+  // Если объект владает неуправляемыми ресурсами реализовать:
+  protected override Finalize() : void
+  {
+    Dispose(false);
+  }
 }
 
 module Program

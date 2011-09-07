@@ -27,7 +27,8 @@ namespace MacroIntroLibrary
       def needUnmanagedDispose = ! (disposeUnmanaged is <[ () ]>);
       def iDisposableType = <[ ttype: System.IDisposable ]>;
       def needOverride = typeBuilder.BaseClass.TryRequire(iDisposableType);
-      def defineMember(ast) { typeBuilder.Define(ast) } // _ = typeBuilder.DefineWithSource
+      //def defineMember(ast) { typeBuilder.Define(ast) }
+      def defineMember(ast) { _ = typeBuilder.DefineWithSource(ast) }
       //Message.Hint($"needOverride=$needOverride");
       
       // Добавляем метод Dispose. Метод помечаем макроатрибутом ImplementDisposeFields.
@@ -40,8 +41,6 @@ namespace MacroIntroLibrary
       defineMember(
         <[ decl: [ImplementDisposeFields] 
                  private $(disposeIDisposableFields : name)() : void { } ]>);
-      
-      typeBuilder.UserData["DisposeIDisposableFieldsName"] = disposeIDisposableFields;
       
       def disposeImple =
         if (needOverride)

@@ -4,7 +4,6 @@ using System.IO;
 
 using MacroIntroLibrary;
 
-
 [Disposable(WriteLine("Dispose managed resources."), WriteLine("Dispose unmanaged resources."), Close)]
 class Base
 {

@@ -65,7 +65,6 @@
     <Compile Include="Disposable\ImplementDisposeFields.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Macro1.n" />
     <Compile Include="ProjectInfo.n">
       <SubType>Code</SubType>
     </Compile>
