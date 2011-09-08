@@ -40,7 +40,9 @@ namespace MacroIntroLibrary
       
       def disposeIDisposableFields = Macros.NewSymbol("DisposeIDisposableFields");
 
-def typedType = typeBuilder.GetMemType();
+def typedType = typeBuilder.GetFreshType();
+unless (typedType.args.IsEmpty)
+  _ = typedType.args.Head.Unify(typer.InternalType.Int32);
 def expr = <[ $(typedType : typed) ]>;
 Message.Hint($"'$expr' ($(expr.GetType()))");
       
