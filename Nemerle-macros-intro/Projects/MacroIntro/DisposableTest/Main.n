@@ -11,7 +11,7 @@ class Base
 
 [Record]
 [Disposable]
-class Derived : Base
+class Derived[T] : Base
 {
   private FileStream : FileStream;
   private Str : string;

@@ -1,4 +1,5 @@
-﻿using Nemerle;
+﻿using System.Runtime.Versioning.ComponentGuaranteesOptions;
+using Nemerle;
 using Nemerle.Collections;
 using Nemerle.Compiler;
 using Nemerle.Compiler.Parsetree;
@@ -17,13 +18,14 @@ namespace MacroIntroLibrary
   {
     DisposableImpl.DoTransform(Macros.ImplicitCTX(), typeBuilder, disposeManaged, disposeUnmanaged, disposeName)
   }
-  
+ 
+
   module DisposableImpl
   {
     public DoTransform(typer : Typer, typeBuilder : TypeBuilder, disposeManaged : PExpr, disposeUnmanaged : PExpr, disposeName : PExpr) : void
     {
       Macros.DefineCTX(typer); // это нружно для цитаты <[ ttype: System.IDisposable ]>
-
+      
       def needUnmanagedDispose = ! (disposeUnmanaged is <[ () ]>);
       def iDisposableType = <[ ttype: System.IDisposable ]>;
       def needOverride = typeBuilder.BaseClass.TryRequire(iDisposableType);
@@ -37,6 +39,10 @@ namespace MacroIntroLibrary
       defineMember(<[ decl: [RecordIgnore] private mutable _disposed : bool; ]>);
       
       def disposeIDisposableFields = Macros.NewSymbol("DisposeIDisposableFields");
+
+def typedType = typeBuilder.GetMemType();
+def expr = <[ $(typedType : typed) ]>;
+Message.Hint($"'$expr' ($(expr.GetType()))");
       
       defineMember(
         <[ decl: [ImplementDisposeFields] 
