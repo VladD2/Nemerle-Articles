@@ -22,6 +22,10 @@ namespace MacroIntroLibrary
 
   module DisposableImpl
   {
+    f() : void
+    {
+    }
+    
     public DoTransform(typer : Typer, typeBuilder : TypeBuilder, disposeManaged : PExpr, disposeUnmanaged : PExpr, disposeName : PExpr) : void
     {
       Macros.DefineCTX(typer); // это нружно для цитаты <[ ttype: System.IDisposable ]>

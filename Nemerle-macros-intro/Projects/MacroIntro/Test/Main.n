@@ -24,7 +24,7 @@ module Program
 
 public partial class TestClass
 {
-  public Method(param1 : int, param2 : System.Int32, param3 = 42) : int
+  public Method(param1 : int, param2 : System.Int32, param3 : Int32 /*= 42*/) : int
   {
     param1 + param2 + param3
   }
