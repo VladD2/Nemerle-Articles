@@ -43,12 +43,19 @@ namespace MacroIntroLibrary
       defineMember(<[ decl: [RecordIgnore] private mutable _disposed : bool; ]>);
       
       def disposeIDisposableFields = Macros.NewSymbol("DisposeIDisposableFields");
-
-def typedType = typeBuilder.GetFreshType();
-unless (typedType.args.IsEmpty)
-  _ = typedType.args.Head.Unify(typer.InternalType.Int32);
-def expr = <[ $(typedType : typed) ]>;
-Message.Hint($"'$expr' ($(expr.GetType()))");
+      
+      def ms = Modifiers(NemerleAttributes.None, []);
+      match (<[ decl: ..$ms public abstract partial class MyClass { } ]> : ClassMember)
+      {
+        | <[ decl: ..$attrs class $name { } ]> => Message.Hint($"attrs='$attrs' name='$name'");  
+        | e => Message.Hint($"Обломайся! '$(e.modifiers.Attributes)'");
+      }      
+      
+//def typedType = typeBuilder.GetFreshType();
+//unless (typedType.args.IsEmpty)
+//  _ = typedType.args.Head.Unify(typer.InternalType.Int32);
+//def expr = <[ $(typedType : typed) ]>;
+//Message.Hint($"'$expr' ($(expr.GetType()))");
       
       defineMember(
         <[ decl: [ImplementDisposeFields] 
