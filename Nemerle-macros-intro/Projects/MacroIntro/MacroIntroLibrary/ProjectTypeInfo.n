@@ -46,12 +46,12 @@ namespace MacroIntroLibrary
           {
             | method is MethodBuilder =>
               def header = method.Header;
-              foreach (param in header.parms with i) // 4
-                Message.Hint(param.Location, $"      Paramert $(i + 1): $(param.Name) : $(param.ty)"); // 5
+              foreach (param in header.Parameters with i) // 4
+                Message.Hint(param.Location, $"      Paramert $(i + 1): $(param.Name) : $(param.Type)"); // 5
               
-              Message.Hint(header.RetTypeLoc, $"      Return type $(method.Header.RetType)"); // 6
+              Message.Hint(header.ReturnTypeLocation, $"      Return type $(header.ReturnType)"); // 6
 
-            | _                       => ()
+            | _ => ()
           }
         }
       }

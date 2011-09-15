@@ -37,6 +37,9 @@ namespace MacroIntroLibrary
       def defineMember(ast) { _ = typeBuilder.DefineWithSource(ast) }
       //Message.Hint($"needOverride=$needOverride");
       
+      def attrs = Modifiers(NemerleAttributes.Private, []);
+      _ = <[ decl: ..$attrs public class MyClass { } ]>;
+      
       // Добавляем метод Dispose. Метод помечаем макроатрибутом ImplementDisposeFields.
       // Он "вызовится" позже.
       
@@ -44,27 +47,19 @@ namespace MacroIntroLibrary
       
       def disposeIDisposableFields = Macros.NewSymbol("DisposeIDisposableFields");
       
-      def ms = Modifiers(NemerleAttributes.None, []);
-      match (<[ decl: ..$ms public abstract partial class MyClass { } ]> : ClassMember)
-      {
-        | <[ decl: ..$attrs class $name { } ]> => Message.Hint($"attrs='$attrs' name='$name'");  
-        | e => Message.Hint($"Обломайся! '$(e.modifiers.Attributes)'");
-      }      
-      
-//def typedType = typeBuilder.GetFreshType();
-//unless (typedType.args.IsEmpty)
-//  _ = typedType.args.Head.Unify(typer.InternalType.Int32);
-//def expr = <[ $(typedType : typed) ]>;
-//Message.Hint($"'$expr' ($(expr.GetType()))");
-      
       defineMember(
         <[ decl: [ImplementDisposeFields] 
                  private $(disposeIDisposableFields : name)() : void { } ]>);
-      
-      def disposeImple =
+      def modifiers = 
         if (needOverride)
-          <[ decl:
-            protected override Dispose(disposing : bool) : void
+          NemerleModifiers.Protected | NemerleModifiers.Override
+        else
+          NemerleModifiers.Protected | NemerleModifiers.Virtual;
+      def attributesAndModifiers = AttributesAndModifiers(modifiers, []);
+      def baseCall = if (needOverride) <[ base.Dispose(disposing); ]> else <[ () ]>;
+
+      def disposeImple = <[ decl:
+            ..$attributesAndModifiers Dispose(disposing : bool) : void
             {
               unless (_disposed)
               {
@@ -78,30 +73,13 @@ namespace MacroIntroLibrary
                 // Вставляем код очистки неуправляемых ресурсов предосталяемый пользователем.
                 $disposeUnmanaged;
                 // TODO: Обнуляем все изменяемые поля.
-                  base.Dispose(disposing);
-                _disposed = true;
-              }
-            } ]>
-        else
-          <[ decl: 
-            protected virtual Dispose(disposing : bool) : void
-            {
-              unless (_disposed)
-              {
-                when (disposing)
-                {
-                  // Генерируем вызовы Dispose для IDisposable-полей.
-                  $(disposeIDisposableFields : name)();
-                  // Вставояем пользовательский код очистки управляемых ресурсов.
-                  $disposeManaged;
-                }
-                // Вставляем пользовательский код очистки неуправляемых ресурсов.
-                $disposeUnmanaged;
-                // TODO: Обнуляем все изменяемые поля.
+                $baseCall;
                 _disposed = true;
               }
             } ]>;
-
+            
+      //disposeImple.modifiers;
+            
       defineMember(disposeImple);
 
       when (needUnmanagedDispose)
