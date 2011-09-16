@@ -1,0 +1,36 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Compiler;
+using Nemerle.Compiler.Parsetree;
+using Nemerle.Compiler.Typedtree;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+
+namespace MacroIntroLibrary
+{
+  [MacroUsage(MacroPhase.BeforeInheritance, MacroTargets.Assembly)]
+  macro AddClassInsideNamespace(namespaceName : PExpr)
+  {
+    def typer = Macros.ImplicitCTX();
+    assert2(false);  
+    match (Util.QidOfExpr(namespaceName))
+    {
+      | Some((qualifiedIdentifier, _name)) =>
+        def env = typer.Manager.CoreEnv.EnterIntoNamespace(qualifiedIdentifier);
+        def builder = env.Define(<[ decl:
+            public class MyType
+            {
+              public Test() : void {  }
+            } ]>);
+          
+        builder.Compile();
+
+      | None => Message.FatalError(namespaceName.Location, "expected qualified identifier");
+    }
+  }
+}

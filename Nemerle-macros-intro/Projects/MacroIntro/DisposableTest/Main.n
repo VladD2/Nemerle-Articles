@@ -4,6 +4,12 @@ using System.IO;
 
 using MacroIntroLibrary;
 
+namespace MyNamespace
+{
+  [assembly: AddClassInsideNamespace(A.B.C)]
+  [assembly: AddClassInsideNamespace(X.Y.Z)]
+}
+
 [Disposable(WriteLine("Dispose managed resources."), WriteLine("Dispose unmanaged resources."), Close)]
 class Base
 {
@@ -18,11 +24,30 @@ class Derived[T] : Base
   public Reader : TextReader { get; private set; }
 }
 
-module Program2
+[AddNestedClass(Nested)]
+class A
+{
+  public F() : void { Nested().Test() }
+  private Field : int = 1;
+
+  /*
+  class Nested
+  {
+    public Test(a : A) : void
+    {
+      WriteLine(a.Field);
+    }
+  }
+  */
+}
+
+module Program
 {
   Main() : void
   {
-    
+    A.B.C.MyType().Test();
+    X.Y.Z.MyType().Test();
+    A().F();
     def x = Derived(null, "", null);
     x.Close();
     _ = ReadLine();

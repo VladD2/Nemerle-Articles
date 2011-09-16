@@ -51,36 +51,30 @@ namespace MacroIntroLibrary
         <[ decl: [ImplementDisposeFields] 
                  private $(disposeIDisposableFields : name)() : void { } ]>);
       def modifiers = 
-        if (needOverride)
-          NemerleModifiers.Protected | NemerleModifiers.Override
-        else
-          NemerleModifiers.Protected | NemerleModifiers.Virtual;
+        if (needOverride) NemerleModifiers.Protected | NemerleModifiers.Override
+        else              NemerleModifiers.Protected | NemerleModifiers.Virtual;
       def attributesAndModifiers = AttributesAndModifiers(modifiers, []);
       def baseCall = if (needOverride) <[ base.Dispose(disposing); ]> else <[ () ]>;
 
-      def disposeImple = <[ decl:
-            ..$attributesAndModifiers Dispose(disposing : bool) : void
+      defineMember(<[ decl:
+        ..$attributesAndModifiers Dispose(disposing : bool) : void
+        {
+          unless (_disposed)
+          {
+            when (disposing)
             {
-              unless (_disposed)
-              {
-                when (disposing)
-                {
-                  // Генерируем вызовы Dispose для IDisposable-полей.
-                  $(disposeIDisposableFields : name)();
-                  // Вставояем код очистки управляемых ресурсов предосталяемый пользователем.
-                  $disposeManaged;
-                }
-                // Вставляем код очистки неуправляемых ресурсов предосталяемый пользователем.
-                $disposeUnmanaged;
-                // TODO: Обнуляем все изменяемые поля.
-                $baseCall;
-                _disposed = true;
-              }
-            } ]>;
-            
-      //disposeImple.modifiers;
-            
-      defineMember(disposeImple);
+              // Генерируем вызовы Dispose для IDisposable-полей.
+              $(disposeIDisposableFields : name)();
+              // Вставояем код очистки управляемых ресурсов предосталяемый пользователем.
+              $disposeManaged;
+            }
+            // Вставляем код очистки неуправляемых ресурсов предосталяемый пользователем.
+            $disposeUnmanaged;
+            // TODO: Обнуляем все изменяемые поля.
+            $baseCall;
+            _disposed = true;
+          }
+        } ]>);
 
       when (needUnmanagedDispose)
         defineMember(<[ decl:

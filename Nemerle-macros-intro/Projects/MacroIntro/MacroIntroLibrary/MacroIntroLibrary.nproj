@@ -56,6 +56,15 @@
     </MacroReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddClass.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AddClassInsideNamespace.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AddNestedClass.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Disposable\Disposable_BeforeTypedMembers.n">
       <SubType>Code</SubType>
     </Compile>

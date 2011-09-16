@@ -1,0 +1,47 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Compiler;
+using Nemerle.Compiler.Parsetree;
+using Nemerle.Compiler.Typedtree;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+
+namespace MacroIntroLibrary
+{
+  [MacroUsage(MacroPhase.BeforeTypedMembers, MacroTargets.Class)]
+  macro AddNestedClass(typeBuilder : TypeBuilder, name : PExpr)
+  {
+    AddNestedClassImpl.DoTransform(Macros.ImplicitCTX(), typeBuilder, name)
+  }
+  
+  module AddNestedClassImpl
+  {
+    public DoTransform(typer : Typer, typeBuilder : TypeBuilder, nameExpr : PExpr) : void
+    {
+      Macros.DefineCTX(typer);
+      
+      def name =
+        match (nameExpr)
+        {
+          | <[ $(x : name) ]> => x
+          | _ => Message.FatalError(nameExpr.Location, "expected simple name");
+        };
+        
+        //typer.Manager.CoreEnv.Define()
+      //typer.Manager.CoreEnv.EnterIntoNamespace();
+      def builder = typeBuilder.DefineNestedType(<[ decl:
+          public class $(name : name)
+          {
+            public Test() : void {  }
+          }
+          ]>);
+          
+      builder.Compile();
+    }
+  }
+}
