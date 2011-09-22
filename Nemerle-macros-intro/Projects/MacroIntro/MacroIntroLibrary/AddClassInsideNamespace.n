@@ -17,7 +17,7 @@ namespace MacroIntroLibrary
   macro AddClassInsideNamespace(namespaceName : PExpr)
   {
     def typer = Macros.ImplicitCTX();
-    assert2(false);  
+    //assert2(false);  
     match (Util.QidOfExpr(namespaceName))
     {
       | Some((qualifiedIdentifier, _name)) =>

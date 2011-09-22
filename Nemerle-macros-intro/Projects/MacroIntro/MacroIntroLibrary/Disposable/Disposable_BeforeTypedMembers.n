@@ -85,10 +85,10 @@ namespace MacroIntroLibrary
         def disposeMethodName = 
           match (disposeName)
           {
-            | <[ $(disposeMethodName : name) ]> => disposeMethodName
+            | <[ $(_ : name) ]> as nameRef => nameRef
             | _ => 
               Message.Error(disposeName.Location, "Expected simple name");
-              Name("Dispose")
+              <[ Dispose ]>
           };
         defineMember(<[ decl:
           public $(disposeMethodName : name)() : void
