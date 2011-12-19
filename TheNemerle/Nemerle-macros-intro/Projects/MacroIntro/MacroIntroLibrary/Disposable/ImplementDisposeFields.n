@@ -17,16 +17,16 @@ namespace MacroIntroLibrary
   {
     ImplementDisposeFieldsImpl.DoTransform(Macros.ImplicitCTX(), typeBuilder, method)
   }
-  
+
   module ImplementDisposeFieldsImpl
   {
     public DoTransform(typer : Typer, typeBuilder : TypeBuilder, method : MethodBuilder) : void
     {
       Macros.DefineCTX(typer); // это нружно для цитаты <[ ttype: System.IDisposable ]>
-      
+
       // Так надо получать описание типа в макросах. Использовать System.Type в макросах нельзя!
       def iDisposableType = <[ ttype: System.IDisposable ]>;
-      
+
       def isMemberTypeImplementIDisposable(member : IMember) : bool
       {
         // Вызвать Dispose() имеет смысл только у полей и свойств определенных в текущем классе. Фильтрум их...
@@ -34,16 +34,16 @@ namespace MacroIntroLibrary
         // Получаем тип члена и проверям, что он унифицируется с IDisposable. А использовать System.Type в макросах нельзя!
         && member.GetMemType().TryRequire(iDisposableType)
       }
-      
+
       // Получаем все экземплярные поля и свойства типы которых реализуют IDisposable.
-      def members = typeBuilder.GetMembers(BindingFlags.DeclaredOnly | BindingFlags.Instance 
+      def members = typeBuilder.GetMembers(BindingFlags.DeclaredOnly | BindingFlags.Instance
                                          | BindingFlags.Public       | BindingFlags.NonPublic)
                                .Filter(isMemberTypeImplementIDisposable);
-      
+
       // Преобразуем список членов в список выражений проиводящий обращение к ним и вызвающих от них Dispose().
       // Оператор ?. позволяет защититься от вызова по нулевому указателю.
       def exprs = members.Map(m => <[ (this.$(m.Name :  usesite) : System.IDisposable)?.Dispose() ]>);
-      
+
       // Заменяем тело Dispose-а данного класа. Цитата ..$х раскрывает список выражений.
       method.Body = <[ { ..$exprs } ]>;
     }
