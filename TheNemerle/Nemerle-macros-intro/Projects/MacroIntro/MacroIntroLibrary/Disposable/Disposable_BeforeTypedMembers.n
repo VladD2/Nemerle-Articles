@@ -25,7 +25,7 @@ namespace MacroIntroLibrary
     f() : void
     {
     }
-    
+
     public DoTransform(typer : Typer, typeBuilder : TypeBuilder, disposeManaged : PExpr, disposeUnmanaged : PExpr, disposeName : PExpr) : void
     {
       Macros.DefineCTX(typer); // это нружно для цитаты <[ ttype: System.IDisposable ]>
@@ -39,7 +39,7 @@ namespace MacroIntroLibrary
       
       def attrs = Modifiers(NemerleAttributes.Private, []);
       _ = <[ decl: ..$attrs public class MyClass { } ]>;
-      
+
       // Добавляем метод Dispose. Метод помечаем макроатрибутом ImplementDisposeFields.
       // Он "вызовится" позже.
       

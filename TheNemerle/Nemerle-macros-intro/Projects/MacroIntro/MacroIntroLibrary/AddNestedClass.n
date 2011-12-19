@@ -18,20 +18,20 @@ namespace MacroIntroLibrary
   {
     AddNestedClassImpl.DoTransform(Macros.ImplicitCTX(), typeBuilder, name)
   }
-  
+
   module AddNestedClassImpl
   {
     public DoTransform(typer : Typer, typeBuilder : TypeBuilder, nameExpr : PExpr) : void
     {
       Macros.DefineCTX(typer);
-      
+
       def name =
         match (nameExpr)
         {
           | <[ $(x : name) ]> => x
           | _ => Message.FatalError(nameExpr.Location, "expected simple name");
         };
-        
+
         //typer.Manager.CoreEnv.Define()
       //typer.Manager.CoreEnv.EnterIntoNamespace();
       def builder = typeBuilder.DefineNestedType(<[ decl:
@@ -40,7 +40,7 @@ namespace MacroIntroLibrary
             public Test() : void {  }
           }
           ]>);
-          
+
       builder.Compile();
     }
   }
