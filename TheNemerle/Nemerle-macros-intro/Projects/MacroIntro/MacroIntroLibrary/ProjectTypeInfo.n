@@ -17,13 +17,13 @@ namespace MacroIntroLibrary
   {
     ProjectTypeInfoImpl.DoTransform(Macros.ImplicitCTX(), )
   }
-  
+
   module ProjectTypeInfoImpl
   {
     public DoTransform(typer : Typer, ) : void
     {
       Macros.DefineCTX(typer);
-      
+
       def types = typer.Manager.NameTree.NamespaceTree.GetTypeBuilders( // 1
               onlyTopDeclarations=true);
 

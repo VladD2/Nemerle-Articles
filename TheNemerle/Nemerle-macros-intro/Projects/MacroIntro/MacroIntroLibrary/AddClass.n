@@ -22,7 +22,7 @@ namespace MacroIntroLibrary
         {
           public Test() : void {  }
         } ]>);
-          
+
     builder.Compile();
   }
 }
